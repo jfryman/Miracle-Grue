@@ -251,32 +251,12 @@ string FileSystemAbstractor::getSystemConfigFile(const char *filename) const {
 }
 
 string FileSystemAbstractor::getUserConfigFile(const char *filename) const {
-#ifdef WIN32
-	char app_data[1024];
-	if(SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0,
-								 app_data))) { 
-		return pathJoin(pathJoin(string(app_data), "Makerbot"),
-						filename);
-	}
-#else //linux or apple
 	char pwbuff[1024];
 	struct passwd pw;
 	struct passwd *tempptr;
 	if (getpwuid_r(getuid(), &pw, pwbuff, 1024, &tempptr) == 0) {
-
-#ifdef __APPLE__
-		return pathJoin(pathJoin(string(pw.pw_dir),
-								 "Library/Preferences/Makerbot/Miracle-Grue"),
-						filename);
-#else //linux
 		return pathJoin(pathJoin(string(pw.pw_dir), ".config/makerbot"),
 						filename);
-#endif //linux
-	}
-
-#endif //win32
-
-	return string();
 }
 
 ProgressLog::ProgressLog(unsigned int count)
